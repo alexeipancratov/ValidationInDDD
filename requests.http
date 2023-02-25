@@ -1,1 +1,37 @@
 GET http://localhost:5000/api/students/3
+
+### Create a student
+POST http://localhost:5000/api/students
+Content-Type: application/json
+
+{
+    "email": "carl@gmail.com",
+    "name": "Carl Carlson",
+    "address": "3456 3rd St, Carlington, VA, 2203"
+}
+
+### Update a student
+PUT http://localhost:5000/api/students/3
+Content-Type: application/json
+
+{
+    "name": "Carl Carlson Jr",
+    "address": "3456 3rd St, Carlington, VA, 2203"
+}
+
+### Eroll a student
+POST http://localhost:5000/api/students/3/enrollments
+Content-Type: application/json
+
+{
+    "enrollments": [
+        {
+            "course": "Calculus",
+            "grade": "A"
+        },
+        {
+            "course": "Literature",
+            "grade": "B"
+        }
+    ]
+}
