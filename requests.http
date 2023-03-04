@@ -5,9 +5,14 @@ POST http://localhost:5000/api/students
 Content-Type: application/json
 
 {
-    "email": "carl@gmail.com",
-    "name": "Carl Carlson",
-    "address": "3456 3rd St, Carlington, VA, 2203"
+  "email": "carl@gmail.com",
+  "name": "Carl Johnson",
+  "address": {
+    "city": "Carlington",
+    "street": "3456 Third St",
+    "state": "VA",
+    "zipCode": "2203"
+  }
 }
 
 ### Update a student
@@ -15,23 +20,23 @@ PUT http://localhost:5000/api/students/3
 Content-Type: application/json
 
 {
-    "name": "Carl Carlson Jr",
-    "address": "3456 3rd St, Carlington, VA, 2203"
+  "name": "Carl Carlson Jr",
+  "address": "3456 3rd St, Carlington, VA, 2203"
 }
 
-### Eroll a student
+### Enroll a student
 POST http://localhost:5000/api/students/3/enrollments
 Content-Type: application/json
 
 {
-    "enrollments": [
-        {
-            "course": "Calculus",
-            "grade": "A"
-        },
-        {
-            "course": "Literature",
-            "grade": "B"
-        }
-    ]
+  "enrollments": [
+    {
+      "course": "Calculus",
+      "grade": "A"
+    },
+    {
+      "course": "Literature",
+      "grade": "B"
+    }
+  ]
 }

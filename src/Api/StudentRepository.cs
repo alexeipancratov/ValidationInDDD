@@ -6,7 +6,7 @@ namespace Api
 {
     public class StudentRepository
     {
-        private static readonly List<Student> _existingStudents = new List<Student>
+        private static readonly List<Student> _existingStudents = new()
         {
             Alice(),
             Bob()
@@ -41,7 +41,14 @@ namespace Api
 
         private static Student Alice()
         {
-            var alice = new Student("alice@gmail.com", "Alice Alison", "1234 Main St, Arlington, VA, 22201");
+            var address = new Address
+            {
+                Street = "1234 Main St",
+                City = "Arlington",
+                State = "VA",
+                ZipCode = "22201"
+            };
+            var alice = new Student("alice@gmail.com", "Alice Alison", address);
             SetId(alice, 1);
             alice.Enroll(new Course(1, "Calculus", 5), Grade.A);
 
@@ -50,7 +57,14 @@ namespace Api
 
         private static Student Bob()
         {
-            var bob = new Student("bob@gmail.com", "Bob Bobson", "2345 Second St, Barlington, VA, 22202");
+            var address = new Address
+            {
+                Street = "2345 Second St",
+                City = "Barlington",
+                State = "VA",
+                ZipCode = "22202"
+            };
+            var bob = new Student("bob@gmail.com", "Bob Bobson", address);
             SetId(bob, 2);
             bob.Enroll(new Course(2, "History", 4), Grade.B);
             

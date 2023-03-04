@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DomainModel;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api
@@ -20,7 +21,22 @@ namespace Api
         [HttpPost]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            var student = new Student(request.Email, request.Name, request.Address);
+            var validator = new RegisterRequestValidator();
+            ValidationResult result = validator.Validate(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors[0].ErrorMessage);
+            }
+
+            var address = new Address
+            {
+                City = request.Address.City,
+                Street = request.Address.Street,
+                State = request.Address.State,
+                ZipCode = request.Address.ZipCode
+            };
+            var student = new Student(request.Email, request.Name, address);
             _studentRepository.Save(student);
 
             var response = new RegisterResponse
@@ -33,9 +49,24 @@ namespace Api
         [HttpPut("{id}")]
         public IActionResult EditPersonalInfo(long id, [FromBody] EditPersonalInfoRequest request)
         {
+            var validator = new EditPersonalInfoRequestValidator();
+            var result = validator.Validate(request);
+
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors[0].ErrorMessage);
+            }
+            
             Student student = _studentRepository.GetById(id);
 
-            student.EditPersonalInfo(request.Name, request.Address);
+            var address = new Address
+            {
+                City = request.Address.City,
+                Street = request.Address.Street,
+                State = request.Address.State,
+                ZipCode = request.Address.ZipCode
+            };
+            student.EditPersonalInfo(request.Name, address);
             _studentRepository.Save(student);
 
             return Ok();
@@ -62,9 +93,16 @@ namespace Api
         {
             Student student = _studentRepository.GetById(id);
 
-            var resonse = new GetResonse
+            var address = new AddressDto
             {
-                Address = student.Address,
+                City = student.Address.City,
+                Street = student.Address.Street,
+                State = student.Address.State,
+                ZipCode = student.Address.ZipCode
+            };
+            var response = new GetResonse
+            {
+                Address = address,
                 Email = student.Email,
                 Name = student.Name,
                 Enrollments = student.Enrollments.Select(x => new CourseEnrollmentDto
@@ -73,7 +111,7 @@ namespace Api
                     Grade = x.Grade.ToString()
                 }).ToArray()
             };
-            return Ok(resonse);
+            return Ok(response);
         }
     }
 }
