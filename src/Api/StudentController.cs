@@ -29,14 +29,10 @@ namespace Api
                 return BadRequest(result.Errors[0].ErrorMessage);
             }
 
-            var address = new Address
-            {
-                City = request.Address.City,
-                Street = request.Address.Street,
-                State = request.Address.State,
-                ZipCode = request.Address.ZipCode
-            };
-            var student = new Student(request.Email, request.Name, address);
+            var addresses = request.Addresses
+                .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
+                .ToArray();
+            var student = new Student(request.Email, request.Name, addresses);
             _studentRepository.Save(student);
 
             var response = new RegisterResponse
@@ -59,14 +55,10 @@ namespace Api
             
             Student student = _studentRepository.GetById(id);
 
-            var address = new Address
-            {
-                City = request.Address.City,
-                Street = request.Address.Street,
-                State = request.Address.State,
-                ZipCode = request.Address.ZipCode
-            };
-            student.EditPersonalInfo(request.Name, address);
+            var addresses = request.Addresses
+                .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
+                .ToArray();
+            student.EditPersonalInfo(request.Name, addresses);
             _studentRepository.Save(student);
 
             return Ok();
@@ -93,16 +85,12 @@ namespace Api
         {
             Student student = _studentRepository.GetById(id);
 
-            var address = new AddressDto
-            {
-                City = student.Address.City,
-                Street = student.Address.Street,
-                State = student.Address.State,
-                ZipCode = student.Address.ZipCode
-            };
+            var addresses = student.Addresses
+                .Select(a => new AddressDto(a.Street, a.City, a.State, a.ZipCode))
+                .ToArray();
             var response = new GetResonse
             {
-                Address = address,
+                Addresses = addresses,
                 Email = student.Email,
                 Name = student.Name,
                 Enrollments = student.Enrollments.Select(x => new CourseEnrollmentDto

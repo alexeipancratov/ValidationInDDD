@@ -41,14 +41,17 @@ namespace Api
 
         private static Student Alice()
         {
-            var address = new Address
+            var addresses = new[]
             {
-                Street = "1234 Main St",
-                City = "Arlington",
-                State = "VA",
-                ZipCode = "22201"
+                new Address
+                {
+                    Street = "1234 Main St",
+                    City = "Arlington",
+                    State = "VA",
+                    ZipCode = "22201"
+                }
             };
-            var alice = new Student("alice@gmail.com", "Alice Alison", address);
+            var alice = new Student("alice@gmail.com", "Alice Alison", addresses);
             SetId(alice, 1);
             alice.Enroll(new Course(1, "Calculus", 5), Grade.A);
 
@@ -57,14 +60,17 @@ namespace Api
 
         private static Student Bob()
         {
-            var address = new Address
+            var addresses = new[]
             {
-                Street = "2345 Second St",
-                City = "Barlington",
-                State = "VA",
-                ZipCode = "22202"
+                new Address
+                {
+                    Street = "2345 Second St",
+                    City = "Barlington",
+                    State = "VA",
+                    ZipCode = "22202"
+                }
             };
-            var bob = new Student("bob@gmail.com", "Bob Bobson", address);
+            var bob = new Student("bob@gmail.com", "Bob Bobson", addresses);
             SetId(bob, 2);
             bob.Enroll(new Course(2, "History", 4), Grade.B);
             

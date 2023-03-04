@@ -7,12 +7,12 @@ Content-Type: application/json
 {
   "email": "carl@gmail.com",
   "name": "Carl Johnson",
-  "address": {
+  "addresses": [{
     "city": "Carlington",
     "street": "3456 Third St",
     "state": "VA",
     "zipCode": "2203"
-  }
+  }]
 }
 
 ### Update a student

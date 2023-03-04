@@ -7,6 +7,6 @@ public class EditPersonalInfoRequestValidator : AbstractValidator<EditPersonalIn
     public EditPersonalInfoRequestValidator()
     {
         RuleFor(r => r.Name).NotEmpty().Length(0, 200);
-        RuleFor(r => r.Address).NotNull().SetValidator(new AddressValidator());
+        RuleFor(r => r.Addresses).NotNull().SetValidator(new AddressesValidator());
     }
 }
