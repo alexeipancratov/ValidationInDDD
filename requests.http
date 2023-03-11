@@ -6,6 +6,7 @@ Content-Type: application/json
 
 {
   "email": "carl@gmail.com",
+  "phone": "2021234567",
   "name": "Carl Johnson",
   "addresses": [{
     "city": "Carlington",
