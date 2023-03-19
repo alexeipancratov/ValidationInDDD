@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api
 {
     [Route("api/students")]
-    public class StudentController : Controller
+    public class StudentController : ApplicationController
     {
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
@@ -21,6 +21,11 @@ namespace Api
         [HttpPost]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Error");
+            }
+            
             var validator = new RegisterRequestValidator();
             ValidationResult result = validator.Validate(request);
 

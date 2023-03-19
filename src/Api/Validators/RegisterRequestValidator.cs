@@ -7,10 +7,17 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
     public RegisterRequestValidator()
     {
+        // We can control when to stop validation.
+        // Can also be configured in each rule set separately as well.
+        // ClassLevelCascadeMode = CascadeMode.Stop;
+        // RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(r => r.Name).NotEmpty().Length(0, 200);
         RuleFor(r => r.Addresses).NotNull().SetValidator(new AddressesValidator());
         
         // Conditional validation.
+        // NOTE: These validations will be run sequentially by default regardless of failures, so Must
+        // will be invoked together with NotEmpty.
         // RuleFor(r => r.Phone)
         //     .NotEmpty()
         //     .Must(p => Regex.IsMatch(p, "^[2-9][0-9]{9}$"))
