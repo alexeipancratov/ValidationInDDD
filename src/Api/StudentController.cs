@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using DomainModel;
-using FluentValidation.Results;
+using DomainModel.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api
@@ -21,23 +21,17 @@ namespace Api
         [HttpPost]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Error");
-            }
-            
-            var validator = new RegisterRequestValidator();
-            ValidationResult result = validator.Validate(request);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors[0].ErrorMessage);
-            }
-
             var addresses = request.Addresses
                 .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
                 .ToArray();
-            var student = new Student(request.Email, request.Name, addresses);
+            var email = Email.Create(request.Email);
+            var name = StudentName.Create(request.Name);
+            if (email.IsFailure)
+                return BadRequest(email.Error.Message);
+            if (name.IsFailure)
+                return BadRequest(name.Error.Message);
+            
+            var student = new Student(email.Value, name.Value, addresses);
             _studentRepository.Save(student);
 
             var response = new RegisterResponse
@@ -63,7 +57,7 @@ namespace Api
             var addresses = request.Addresses
                 .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
                 .ToArray();
-            student.EditPersonalInfo(request.Name, addresses);
+            // student.EditPersonalInfo(request.Name, addresses);
             _studentRepository.Save(student);
 
             return Ok();
@@ -96,8 +90,8 @@ namespace Api
             var response = new GetResonse
             {
                 Addresses = addresses,
-                Email = student.Email,
-                Name = student.Name,
+                Email = student.Email.Value,
+                Name = student.Name.Value,
                 Enrollments = student.Enrollments.Select(x => new CourseEnrollmentDto
                 {
                     Course = x.Course.Name,

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DomainModel;
+using DomainModel.ValueObjects;
 
 namespace Api
 {
@@ -51,7 +52,9 @@ namespace Api
                     ZipCode = "22201"
                 }
             };
-            var alice = new Student("alice@gmail.com", "Alice Alison", addresses);
+            var email = Email.Create("alice@gmail.com");
+            var name = StudentName.Create("Alice Alison");
+            var alice = new Student(email.Value, name.Value, addresses);
             SetId(alice, 1);
             alice.Enroll(new Course(1, "Calculus", 5), Grade.A);
 
@@ -70,7 +73,9 @@ namespace Api
                     ZipCode = "22202"
                 }
             };
-            var bob = new Student("bob@gmail.com", "Bob Bobson", addresses);
+            var email = Email.Create("bob@gmail.com");
+            var name = StudentName.Create("Bob Bobson");
+            var bob = new Student(email.Value, name.Value, addresses);
             SetId(bob, 2);
             bob.Enroll(new Course(2, "History", 4), Grade.B);
             
