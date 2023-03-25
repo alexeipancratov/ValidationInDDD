@@ -11,7 +11,7 @@ namespace DomainModel
         public StudentName Name { get; private set; }
         public Address[] Addresses { get; private set; }
 
-        private readonly List<Enrollment> _enrollments = new List<Enrollment>();
+        private readonly List<Enrollment> _enrollments = new();
         public virtual IReadOnlyList<Enrollment> Enrollments => _enrollments.ToList();
 
         protected Student()

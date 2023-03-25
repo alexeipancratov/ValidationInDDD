@@ -26,11 +26,11 @@ namespace Api
                 .ToArray();
             var email = Email.Create(request.Email);
             var name = StudentName.Create(request.Name);
-            if (email.IsFailure)
-                return BadRequest(email.Error.Message);
-            if (name.IsFailure)
-                return BadRequest(name.Error.Message);
-            
+
+            // Accessing Value property would throw an exception if
+            // validation failed. But we rely on FluentValidation here,
+            // so if there was an error and we didn't catch it on the higher level
+            // then we might have a bug in our system.
             var student = new Student(email.Value, name.Value, addresses);
             _studentRepository.Save(student);
 

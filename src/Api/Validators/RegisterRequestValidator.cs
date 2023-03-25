@@ -1,4 +1,6 @@
 using System.Text.RegularExpressions;
+using Api.Validators;
+using DomainModel.ValueObjects;
 using FluentValidation;
 
 namespace Api;
@@ -37,10 +39,14 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             RuleFor(r => r.Email).NotEmpty();
         });
         
+        // RuleFor(r => r.Email)
+        //     .NotEmpty()
+        //     .Length(0, 150)
+        //     .EmailAddress()
+        //     .When(r => r.Email != null);
+
         RuleFor(r => r.Email)
-            .NotEmpty()
-            .Length(0, 150)
-            .EmailAddress()
+            .MustBeValueObject(Email.Create)
             .When(r => r.Email != null);
         
         RuleFor(r => r.Phone)

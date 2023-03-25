@@ -7,17 +7,17 @@ namespace Api
 {
     public class StudentRepository
     {
-        private static readonly List<Student> _existingStudents = new()
+        private static readonly List<Student> ExistingStudents = new()
         {
             Alice(),
             Bob()
         };
-        private static long _lastId = _existingStudents.Max(x => x.Id);
+        private static long _lastId = ExistingStudents.Max(x => x.Id);
 
         public Student GetById(long id)
         {
             // Retrieving from the database
-            return _existingStudents.SingleOrDefault(x => x.Id == id);
+            return ExistingStudents.SingleOrDefault(x => x.Id == id);
         }
 
         public void Save(Student student)
@@ -30,8 +30,8 @@ namespace Api
             }
 
             // Saving to the database
-            _existingStudents.RemoveAll(x => x.Id == student.Id);
-            _existingStudents.Add(student);
+            ExistingStudents.RemoveAll(x => x.Id == student.Id);
+            ExistingStudents.Add(student);
         }
 
         private static void SetId(Entity entity, long id)
