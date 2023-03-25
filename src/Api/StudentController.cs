@@ -22,16 +22,16 @@ namespace Api
         public IActionResult Register([FromBody] RegisterRequest request)
         {
             var addresses = request.Addresses
-                .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
+                .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode).Value)
                 .ToArray();
             var email = Email.Create(request.Email);
-            var name = StudentName.Create(request.Name);
+            var studentName = request.Name.Trim(); // we can also trim it during validation.
 
             // Accessing Value property would throw an exception if
             // validation failed. But we rely on FluentValidation here,
             // so if there was an error and we didn't catch it on the higher level
             // then we might have a bug in our system.
-            var student = new Student(email.Value, name.Value, addresses);
+            var student = new Student(email.Value, studentName, addresses);
             _studentRepository.Save(student);
 
             var response = new RegisterResponse
@@ -54,9 +54,9 @@ namespace Api
             
             Student student = _studentRepository.GetById(id);
 
-            var addresses = request.Addresses
-                .Select(a => new Address(a.Street, a.City, a.State, a.ZipCode))
-                .ToArray();
+            // var addresses = request.Addresses
+            //     .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode).Value)
+            //     .ToArray();
             // student.EditPersonalInfo(request.Name, addresses);
             _studentRepository.Save(student);
 
@@ -91,7 +91,7 @@ namespace Api
             {
                 Addresses = addresses,
                 Email = student.Email.Value,
-                Name = student.Name.Value,
+                Name = student.Name,
                 Enrollments = student.Enrollments.Select(x => new CourseEnrollmentDto
                 {
                     Course = x.Course.Name,

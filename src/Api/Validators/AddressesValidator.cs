@@ -1,4 +1,5 @@
 using Api.Validators;
+using DomainModel;
 using FluentValidation;
 
 namespace Api;
@@ -14,7 +15,11 @@ public class AddressesValidator : AbstractValidator<AddressDto[]>
             .ForEach(r =>
             {
                 r.NotNull();
-                r.SetValidator(new AddressValidator());
+                // NOTE: With this validation we were violating some pillars of validation:
+                // - validation rules should reside in domain layer
+                // - no parsing support
+                // r.SetValidator(new AddressValidator());
+                r.MustBeEntity(a => Address.Create(a.Street, a.City, a.State, a.ZipCode));
             });
     }
 }

@@ -53,8 +53,8 @@ namespace Api
                 }
             };
             var email = Email.Create("alice@gmail.com");
-            var name = StudentName.Create("Alice Alison");
-            var alice = new Student(email.Value, name.Value, addresses);
+            var name = "Alice Alison";
+            var alice = new Student(email.Value, name, addresses);
             SetId(alice, 1);
             alice.Enroll(new Course(1, "Calculus", 5), Grade.A);
 
@@ -74,8 +74,8 @@ namespace Api
                 }
             };
             var email = Email.Create("bob@gmail.com");
-            var name = StudentName.Create("Bob Bobson");
-            var bob = new Student(email.Value, name.Value, addresses);
+            var name = "Bob Bobson";
+            var bob = new Student(email.Value, name, addresses);
             SetId(bob, 2);
             bob.Enroll(new Course(2, "History", 4), Grade.B);
             
