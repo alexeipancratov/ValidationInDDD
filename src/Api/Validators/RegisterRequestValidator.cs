@@ -1,8 +1,7 @@
-using Api.Validators;
 using DomainModel.ValueObjects;
 using FluentValidation;
 
-namespace Api;
+namespace Api.Validators;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {

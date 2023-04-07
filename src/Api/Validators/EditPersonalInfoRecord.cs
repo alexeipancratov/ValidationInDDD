@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Api;
+namespace Api.Validators;
 
 public class EditPersonalInfoRequestValidator : AbstractValidator<EditPersonalInfoRequest>
 {

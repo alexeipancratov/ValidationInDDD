@@ -9,6 +9,20 @@ namespace Api.Validators;
 
 public static class CustomValidators
 {
+    public static IRuleBuilderOptions<T, TProperty> NotEmpty<T, TProperty>(this IRuleBuilder<T, TProperty> ruleBuilder)
+    {
+        // We want to use our own error messages which contain error code + separator + message itself.
+        // TODO: Overload WithMessage to accept Error object.
+        return DefaultValidatorExtensions.NotEmpty(ruleBuilder)
+            .WithMessage(Errors.General.ValueIsRequired().Serialize());
+    }
+
+    public static IRuleBuilderOptions<T, string> Length<T>(this IRuleBuilder<T, string> ruleBuilder, int min, int max)
+    {
+        return DefaultValidatorExtensions.Length(ruleBuilder, min, max)
+            .WithMessage(Errors.General.InvalidLength().Serialize());
+    }
+    
     public static IRuleBuilderOptions<T, TElement> MustBeEntity<T, TElement, TEntity>(
         this IRuleBuilder<T, TElement> ruleBuilder, Func<TElement, Result<TEntity, Error>> factoryMethod)
         where TEntity : Entity
@@ -19,7 +33,8 @@ public static class CustomValidators
 
             if (result.IsFailure)
             {
-                context.AddFailure(result.Error.Code);
+                // TODO: Overload AddFailure to add Error objects instead.
+                context.AddFailure(result.Error.Serialize());
             }
         });
     }
@@ -34,7 +49,7 @@ public static class CustomValidators
 
             if (result.IsFailure)
             {
-                context.AddFailure(result.Error.Code);
+                context.AddFailure(result.Error.Serialize());
             }
         });
     }
@@ -46,12 +61,12 @@ public static class CustomValidators
         {
             if (min.HasValue && list.Count < min.Value)
             {
-                context.AddFailure($"The list must contain {min.Value} items or more. It contains {list.Count} items.");
+                context.AddFailure(Errors.General.CollectionIsTooSmall(min.Value, list.Count).Serialize());
             }
 
             if (max.HasValue && list.Count > max.Value)
             {
-                context.AddFailure($"The list must contain {max.Value} items or more. It contains {list.Count} items.");
+                context.AddFailure(Errors.General.CollectionIsTooLarge(max.Value, list.Count).Serialize());
             }
         });
     }

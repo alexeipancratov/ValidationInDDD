@@ -11,7 +11,7 @@ public class Envelope
     public string ErrorMessage { get; }
     public string InvalidField { get; }
     public DateTime TimeGenerated { get; }
-    public string TraceId { get;  } // for microservices only
+    // public string TraceId { get;  } // for microservices only
 
     private Envelope(object result, Error error, string invalidField)
     {

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Net;
+using Api.Validators;
 using DomainModel;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -16,11 +17,11 @@ namespace Api
         {
             services.AddControllers();
             // Replace default ASP.NET Core Web API err responses.
-            // services.AddControllers()
-            //     .ConfigureApiBehaviorOptions(options =>
-            //     {
-            //         options.InvalidModelStateResponseFactory = ModelStateValidator.ValidateModelState;
-            //     });
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = ModelStateValidator.ValidateModelState;
+                });
             services.AddFluentValidationAutoValidation();
 
             services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

@@ -34,10 +34,10 @@ public sealed class Error : ValueObject
 
         string[] data = serialized.Split(new[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
 
-        // if (data.Length < 2)
-        //     throw new Exception($"Invalid error serialization: '{serialized}'");
+        if (data.Length < 2)
+            throw new Exception($"Invalid error serialization: '{serialized}'");
 
-        return new Error("err code", data[0]);
+        return new Error(data[0], data[1]);
     }
 }
 

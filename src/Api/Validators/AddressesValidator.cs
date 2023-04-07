@@ -1,9 +1,8 @@
-using Api.Validators;
 using DomainModel;
 using DomainModel.ValueObjects;
 using FluentValidation;
 
-namespace Api;
+namespace Api.Validators;
 
 public class AddressesValidator : AbstractValidator<AddressDto[]>
 {
