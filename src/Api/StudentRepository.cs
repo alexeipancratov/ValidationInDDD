@@ -44,13 +44,7 @@ namespace Api
         {
             var addresses = new[]
             {
-                new Address
-                {
-                    Street = "1234 Main St",
-                    City = "Arlington",
-                    State = "VA",
-                    ZipCode = "22201"
-                }
+                Address.Create("1234 Main St", "Arlington", "VA", "22201", new []{ "VA" }).Value
             };
             var email = Email.Create("alice@gmail.com");
             var name = "Alice Alison";
@@ -65,13 +59,7 @@ namespace Api
         {
             var addresses = new[]
             {
-                new Address
-                {
-                    Street = "2345 Second St",
-                    City = "Barlington",
-                    State = "VA",
-                    ZipCode = "22202"
-                }
+                Address.Create("2345 Second St", "Barlington", "VA", "22202", new []{"VA"}).Value
             };
             var email = Email.Create("bob@gmail.com");
             var name = "Bob Bobson";

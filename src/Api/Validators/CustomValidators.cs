@@ -19,7 +19,7 @@ public static class CustomValidators
 
             if (result.IsFailure)
             {
-                context.AddFailure(result.Error.Message);
+                context.AddFailure(result.Error.Code);
             }
         });
     }
@@ -30,14 +30,11 @@ public static class CustomValidators
     {
         return (IRuleBuilderOptions<T, string>)ruleBuilder.Custom((value, context) =>
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return;
-
             Result<TValueObject, Error> result = factoryMethod(value);
 
             if (result.IsFailure)
             {
-                context.AddFailure(result.Error.Message);
+                context.AddFailure(result.Error.Code);
             }
         });
     }

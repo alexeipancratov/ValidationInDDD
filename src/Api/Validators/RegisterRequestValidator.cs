@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Api.Validators;
 using DomainModel.ValueObjects;
 using FluentValidation;
@@ -7,15 +6,22 @@ namespace Api;
 
 public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public RegisterRequestValidator()
+    public RegisterRequestValidator(StateRepository stateRepository)
     {
         // We can control when to stop validation.
         // Can also be configured in each rule set separately as well.
         // ClassLevelCascadeMode = CascadeMode.Stop;
         // RuleLevelCascadeMode = CascadeMode.Stop;
         
+        // NOTE: We could transform name here as well (by trimming it), during validation
+        // Using the Transform method, but it was deprecated.
+        // Using a computed property is recommended instead.
+        // BUT it would make our validation more complicated.
+        // After all we're still validating if length is more than 200 chars (and trim it afterwards in the controller).
+        // But if users sent data with extra spaces he/she will simply have less available chars.
+
         RuleFor(r => r.Name).NotEmpty().Length(0, 200);
-        RuleFor(r => r.Addresses).NotNull().SetValidator(new AddressesValidator());
+        RuleFor(r => r.Addresses).NotNull().SetValidator(new AddressesValidator(stateRepository));
         
         // Conditional validation.
         // NOTE: These validations will be run sequentially by default regardless of failures, so Must

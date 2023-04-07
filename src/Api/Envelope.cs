@@ -5,11 +5,13 @@ namespace Api;
 
 public class Envelope
 {
+    // Is not generic because this class' purpose is be serialized into JSON.
     public object Result { get; }
     public string ErrorCode { get; }
     public string ErrorMessage { get; }
     public string InvalidField { get; }
     public DateTime TimeGenerated { get; }
+    public string TraceId { get;  } // for microservices only
 
     private Envelope(object result, Error error, string invalidField)
     {

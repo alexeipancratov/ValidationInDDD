@@ -11,7 +11,7 @@ Content-Type: application/json
   "addresses": [{
     "city": "Carlington",
     "street": "3456 Third St",
-    "state": "VA",
+    "state": "",
     "zipCode": "2203"
   }]
 }

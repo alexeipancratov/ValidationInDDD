@@ -11,18 +11,21 @@ namespace Api
     {
         private readonly StudentRepository _studentRepository;
         private readonly CourseRepository _courseRepository;
+        private readonly StateRepository _stateRepository;
 
-        public StudentController(StudentRepository studentRepository, CourseRepository courseRepository)
+        public StudentController(StudentRepository studentRepository, CourseRepository courseRepository,
+            StateRepository stateRepository)
         {
             _studentRepository = studentRepository;
             _courseRepository = courseRepository;
+            _stateRepository = stateRepository;
         }
 
         [HttpPost]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
             var addresses = request.Addresses
-                .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode).Value)
+                .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode, _stateRepository.GetAll()).Value)
                 .ToArray();
             var email = Email.Create(request.Email);
             var studentName = request.Name.Trim(); // we can also trim it during validation.
@@ -44,13 +47,13 @@ namespace Api
         [HttpPut("{id}")]
         public IActionResult EditPersonalInfo(long id, [FromBody] EditPersonalInfoRequest request)
         {
-            var validator = new EditPersonalInfoRequestValidator();
-            var result = validator.Validate(request);
-
-            if (!result.IsValid)
-            {
-                return BadRequest(result.Errors[0].ErrorMessage);
-            }
+            // var validator = new EditPersonalInfoRequestValidator();
+            // var result = validator.Validate(request);
+            //
+            // if (!result.IsValid)
+            // {
+            //     return BadRequest(result.Errors[0].ErrorMessage);
+            // }
             
             Student student = _studentRepository.GetById(id);
 
@@ -85,7 +88,7 @@ namespace Api
             Student student = _studentRepository.GetById(id);
 
             var addresses = student.Addresses
-                .Select(a => new AddressDto(a.Street, a.City, a.State, a.ZipCode))
+                .Select(a => new AddressDto(a.Street, a.City, a.State.Value, a.ZipCode))
                 .ToArray();
             var response = new GetResonse
             {
