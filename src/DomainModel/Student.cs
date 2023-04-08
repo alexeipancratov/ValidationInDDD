@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CSharpFunctionalExtensions;
 using DomainModel.ValueObjects;
 
 namespace DomainModel
@@ -31,16 +32,20 @@ namespace DomainModel
             Addresses = addresses;
         }
 
-        public virtual void Enroll(Course course, Grade grade)
+        // NOTE: Again, we could split it into two operations here - CanEnroll and Enroll (which would throw is CanEnroll
+        // returns false) since here we don't parse input. This approach doesn't work when you parse input.
+        public virtual UnitResult<Error> Enroll(Course course, Grade grade)
         {
             if (_enrollments.Count >= 2)
-                throw new Exception("Cannot have more than 2 enrollments");
-            
+                return UnitResult.Failure(Errors.Student.TooManyEnrollments());
+
             if (_enrollments.Any(x => x.Course == course))
-                throw new Exception($"Student '{Name}' already enrolled into course '{course.Name}'");
+                return UnitResult.Failure(Errors.Student.AlreadyEnrolled(course.Name));
 
             var enrollment = new Enrollment(this, course, grade);
             _enrollments.Add(enrollment);
+
+            return UnitResult.Success<Error>();
         }
     }
 }

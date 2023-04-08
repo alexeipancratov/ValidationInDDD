@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using DomainModel;
 using DomainModel.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -24,17 +23,25 @@ namespace Api
         [HttpPost]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            var addresses = request.Addresses
+            Address[] addresses = request.Addresses
                 .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode, _stateRepository.GetAll()).Value)
                 .ToArray();
-            var email = Email.Create(request.Email);
+            var email = Email.Create(request.Email).Value;
             var studentName = request.Name.Trim(); // we can also trim it during validation.
+
+            // NOTE: We violate the always-valid domain model guideline,
+            // BUT we keep the domain model purity (i.e., not talking to external services) which is more important.ß
+            Student existingStudent = _studentRepository.GetByEmail(email);
+            if (existingStudent != null)
+            {
+                return Error(Errors.Student.EmailIsTaken());
+            }
 
             // Accessing Value property would throw an exception if
             // validation failed. But we rely on FluentValidation here,
             // so if there was an error and we didn't catch it on the higher level
             // then we might have a bug in our system.
-            var student = new Student(email.Value, studentName, addresses);
+            var student = new Student(email, studentName, addresses);
             _studentRepository.Save(student);
 
             var response = new RegisterResponse
@@ -54,13 +61,18 @@ namespace Api
             // {
             //     return BadRequest(result.Errors[0].ErrorMessage);
             // }
-            
             Student student = _studentRepository.GetById(id);
+            if (student == null)
+                return Error(Errors.General.NotFound(id), nameof(id));
 
-            // var addresses = request.Addresses
-            //     .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode).Value)
-            //     .ToArray();
-            // student.EditPersonalInfo(request.Name, addresses);
+            Address[] addresses = request.Addresses
+                .Select(a => Address.Create(a.Street, a.City, a.State, a.ZipCode, _stateRepository.GetAll()).Value)
+                .ToArray();
+            // NOTE: We didn't create a Value Object for name (which would parse it as well)
+            // because it has only one invariant (our guideline).
+            string name = request.Name.Trim();
+            
+            student.EditPersonalInfo(name, addresses);
             _studentRepository.Save(student);
 
             return Ok();
@@ -70,13 +82,24 @@ namespace Api
         public IActionResult Enroll(long id, [FromBody] EnrollRequest request)
         {
             Student student = _studentRepository.GetById(id);
+            if (student == null)
+                return Error(Errors.General.NotFound(id), nameof(id));
 
-            foreach (CourseEnrollmentDto enrollmentDto in request.Enrollments)
+            // NOTE: Here we traded Encapsulation of domain model again
+            for (var i = 0; i < request.Enrollments.Length; i++)
             {
-                Course course = _courseRepository.GetByName(enrollmentDto.Course);
-                var grade = Enum.Parse<Grade>(enrollmentDto.Grade);
-                
-                student.Enroll(course, grade);
+                CourseEnrollmentDto dto = request.Enrollments[i];
+
+                string courseName = (dto.Course ?? string.Empty).Trim();
+                Course course = _courseRepository.GetByName(courseName);
+                if (course == null)
+                    return Error(Errors.General.ValueIsInvalid(), $"{nameof(request.Enrollments)}[{i}].{dto.Course}");
+
+                Grade grade = Grade.Create(dto.Grade).Value;
+
+                var result = student.Enroll(course, grade);
+                if (result.IsFailure)
+                    return Error(result.Error);
             }
 
             return Ok();

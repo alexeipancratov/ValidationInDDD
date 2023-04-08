@@ -19,6 +19,12 @@ namespace Api
             // Retrieving from the database
             return ExistingStudents.SingleOrDefault(x => x.Id == id);
         }
+        
+        public Student GetByEmail(Email email)
+        {
+            // Retrieving from the database
+            return ExistingStudents.SingleOrDefault(x => x.Email == email);
+        }
 
         public void Save(Student student)
         {
